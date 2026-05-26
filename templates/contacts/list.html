@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Contacts</h1>
+
+<a href="/contacts/create/">
+    Add Contact
+</a>
+
+<hr>
+
+{% for contact in object_list %}
+
+<p>
+    {{ contact.name }} - {{ contact.email }}
+</p>
+
+<a href="/contacts/{{ contact.id }}/update/">
+    Edit
+</a>
+
+<a href="/contacts/{{ contact.id }}/delete/">
+    Delete
+</a>
+
+<a href="/contacts/upload/">
+    Upload CSV
+</a>
+<hr>
+
+{% endfor %}
+
+{% endblock %}
