@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Campaigns</h1>
+
+<a href="/campaigns/create/">
+    Create Campaign
+</a>
+
+<hr>
+
+{% for campaign in object_list %}
+
+<p>
+    {{ campaign.subject }}
+    -
+    {{ campaign.status }}
+</p>
+
+<hr>
+
+{% endfor %}
+
+{% endblock %}
