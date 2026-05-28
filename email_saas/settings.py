@@ -37,10 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'accounts',
     'contacts',
     'campaigns',
     'core',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -71,6 +73,22 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'email_saas.wsgi.application'
+
+
+
+
+REST_FRAMEWORK = {
+
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+
+    'DEFAULT_PERMISSION_CLASSES': [
+
+        'rest_framework.permissions.IsAuthenticated',
+    ]
+}
 
 
 # Database
@@ -108,12 +126,12 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_TZ = True
+TIME_ZONE = 'Asia/Dhaka'
 
+USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
@@ -136,3 +154,23 @@ EMAIL_HOST_USER = 'yourgmail@gmail.com'
 EMAIL_HOST_PASSWORD = 'your-app-password'
 
 EMAIL_USE_TLS = True
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+
+CELERY_ACCEPT_CONTENT = ['json']
+
+CELERY_TASK_SERIALIZER = 'json'
+
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+
+    'ACCESS_TOKEN_LIFETIME': timedelta(
+        minutes=60
+    ),
+
+    'REFRESH_TOKEN_LIFETIME': timedelta(
+        days=7
+    ),
+}

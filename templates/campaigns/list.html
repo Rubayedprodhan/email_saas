@@ -2,24 +2,85 @@
 
 {% block content %}
 
-<h1>Campaigns</h1>
+<div class="d-flex justify-content-between
+            align-items-center mb-4">
 
-<a href="/campaigns/create/">
-    Create Campaign
-</a>
+    <h1>
+        Campaign Analytics
+    </h1>
 
-<hr>
+    <a href="/campaigns/create/"
+       class="btn btn-primary">
 
-{% for campaign in object_list %}
+        Create Campaign
 
-<p>
-    {{ campaign.subject }}
-    -
-    {{ campaign.status }}
-</p>
+    </a>
 
-<hr>
+</div>
 
-{% endfor %}
+<div class="row">
+
+    {% for campaign in object_list %}
+
+    <div class="col-md-6">
+
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-body">
+
+                <h4>
+                    {{ campaign.subject }}
+                </h4>
+
+                <hr>
+
+                <p>
+                    <strong>Status:</strong>
+                    {{ campaign.status }}
+                </p>
+
+                <p>
+                    <strong>Total Sent:</strong>
+                    {{ campaign.total_sent }}
+                </p>
+
+                <p>
+                    <strong>Opened:</strong>
+                    {{ campaign.total_opened }}
+                </p>
+
+                <p>
+                    <strong>Failed:</strong>
+                    {{ campaign.total_failed }}
+                </p>
+
+                <p>
+                    <strong>Open Rate:</strong>
+
+                    {% if campaign.total_sent > 0 %}
+
+                    {% widthratio
+                        campaign.total_opened
+                        campaign.total_sent
+                        100
+                    %}%
+
+                    {% else %}
+
+                    0%
+
+                    {% endif %}
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
 
 {% endblock %}

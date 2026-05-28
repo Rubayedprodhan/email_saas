@@ -7,7 +7,7 @@ from django.views.generic import (
     DeleteView
 )
 import pandas as pd
-
+from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
@@ -23,9 +23,7 @@ class ContactListView(LoginRequiredMixin, ListView):
     template_name = 'contacts/list.html'
 
     def get_queryset(self):
-        return Contact.objects.filter(
-            user=self.request.user
-        )
+        return Contact.objects.filter(user=self.request.user)
 
 
 class ContactCreateView(LoginRequiredMixin, CreateView):
@@ -46,9 +44,7 @@ class ContactUpdateView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('contact_list')
 
     def get_queryset(self):
-        return Contact.objects.filter(
-            user=self.request.user
-        )
+        return Contact.objects.filter(user=self.request.user)
 
 
 class ContactDeleteView(LoginRequiredMixin, DeleteView):
@@ -57,9 +53,7 @@ class ContactDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('contact_list')
 
     def get_queryset(self):
-        return Contact.objects.filter(
-            user=self.request.user
-        )
+        return Contact.objects.filter(user=self.request.user)
 
 
 
@@ -71,18 +65,11 @@ class CSVUploadView(LoginRequiredMixin, View):
     def get(self, request):
         form = CSVUploadForm()
 
-        return render(
-            request,
-            self.template_name,
-            {'form': form}
-        )
+        return render(request,self.template_name,{'form': form})
 
     def post(self, request):
 
-        form = CSVUploadForm(
-            request.POST,
-            request.FILES
-        )
+        form = CSVUploadForm(request.POST,request.FILES)
 
         if form.is_valid():
 
@@ -115,3 +102,22 @@ class CSVUploadView(LoginRequiredMixin, View):
             self.template_name,
             {'form': form}
         )
+    
+def unsubscribe_contact(
+    request,
+    contact_id
+):
+
+    contact = get_object_or_404(
+        Contact,
+        id=contact_id
+    )
+
+    contact.is_subscribed = False
+
+    contact.save()
+
+    return render(
+        request,
+        'contacts/unsubscribed.html'
+    )

@@ -6,7 +6,7 @@ from .views import (
     ContactUpdateView,
     ContactDeleteView
 )
-
+from .views import unsubscribe_contact
 urlpatterns = [
     path('', ContactListView.as_view(), name='contact_list'),
 
@@ -25,5 +25,10 @@ urlpatterns = [
     'upload/',
     CSVUploadView.as_view(),
     name='contact_upload'
+),
+    path(
+    'unsubscribe/<int:contact_id>/',
+    unsubscribe_contact,
+    name='unsubscribe_contact'
 ),
 ]
