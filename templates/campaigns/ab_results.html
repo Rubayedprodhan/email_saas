@@ -1,0 +1,21 @@
+<h2>A/B Test Results</h2>
+
+<p>Campaign: {{ campaign.name }}</p>
+
+<table class="table">
+    <tr>
+        <th>Email</th>
+        <th>Variant</th>
+        <th>Opened</th>
+        <th>Clicked</th>
+    </tr>
+
+    {% for r in results %}
+    <tr>
+        <td>{{ r.email }}</td>
+        <td>{{ r.variant }}</td>
+        <td>{{ r.opened }}</td>
+        <td>{{ r.clicked }}</td>
+    </tr>
+    {% endfor %}
+</table>

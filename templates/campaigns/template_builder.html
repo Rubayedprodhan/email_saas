@@ -1,0 +1,532 @@
+<div class="d-flex justify-content-between
+            align-items-center mb-4">
+
+    <h1>
+        Email Builder
+    </h1>
+
+    <div>
+
+        <a href="/campaigns/templates/{{ template_id }}/preview/"
+           class="btn btn-success">
+
+            Live Preview
+
+        </a>
+
+        <a href="/campaigns/templates/{{ template_id }}/blocks/create/"
+           class="btn btn-primary">
+
+            Add Block
+
+        </a>
+
+    </div>
+
+</div>
+
+<div class="card shadow-sm">
+
+    <div class="card-body">
+
+        <div id="sortable-blocks">
+
+            {% for block in object_list %}
+
+            <div class="sortable-item
+                        border
+                        rounded
+                        p-3
+                        mb-3"
+
+                 data-id="{{ block.id }}">
+
+                <div class="d-flex
+                            justify-content-between
+                            align-items-center">
+
+                    <strong>
+                        {{ block.block_type }}
+                    </strong>
+
+                    <span class="badge bg-secondary">
+
+                        Drag
+
+                    </span>
+
+                </div>
+
+                <hr>
+
+                <div contenteditable="true"
+
+     class="editable-content"
+
+     data-id="{{ block.id }}">
+
+    {{ block.content }}
+
+</div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const sortable = document.getElementById(
+    'sortable-blocks'
+);
+
+new Sortable(
+
+    sortable,
+
+    {
+
+        animation: 150,
+
+        onEnd: function () {
+
+            let order = [];
+
+            document.querySelectorAll(
+                '.sortable-item'
+            ).forEach(item => {
+
+                order.push(
+                    item.dataset.id
+                );
+
+            });
+
+            fetch(
+                '/campaigns/blocks/update-order/',
+                {
+
+                    method: 'POST',
+
+                    headers: {
+
+                        'Content-Type':
+                        'application/json',
+
+                        'X-CSRFToken':
+                        '{{ csrf_token }}'
+                    },
+
+                    body: JSON.stringify({
+                        order: order
+                    })
+                }
+            )
+            .then(response => response.json())
+            .then(data => {
+
+                console.log(data);
+
+            });
+
+        }
+    }
+);
+
+
+document.querySelectorAll(
+    '.editable-content'
+).forEach(element => {
+
+    element.addEventListener(
+        'blur',
+
+        function () {
+
+            const blockId =
+                this.dataset.id;
+
+            const content =
+                this.innerHTML;
+
+            fetch(
+
+                `/campaigns/blocks/${blockId}/update/`,
+
+                {
+
+                    method: 'POST',
+
+                    headers: {
+
+                        'Content-Type':
+                        'application/json',
+
+                        'X-CSRFToken':
+                        '{{ csrf_token }}'
+                    },
+
+                    body: JSON.stringify({
+
+                        content: content
+                    })
+                }
+            )
+            .then(response => response.json())
+            .then(data => {
+
+                console.log(data);
+
+            });
+
+        }
+    );
+
+});
+<div class="row">
+
+    <!-- LEFT -->
+    <div class="col-md-6">
+
+        <div class="card shadow-sm">
+
+            <div class="card-body">
+
+                <div id="sortable-blocks">
+
+                    {% for block in object_list %}
+
+                    <div class="sortable-item
+                                border
+                                rounded
+                                p-3
+                                mb-3"
+
+                         data-id="{{ block.id }}">
+
+                        <div class="d-flex
+                                    justify-content-between
+                                    align-items-center">
+
+                            <strong>
+                                {{ block.block_type }}
+                            </strong>
+
+                            <span class="badge bg-secondary">
+
+                                Drag
+
+                            </span>
+
+                        </div>
+
+                        <hr>
+
+                        <div contenteditable="true"
+
+                             class="editable-content"
+
+                             data-id="{{ block.id }}">
+
+                            {{ block.content }}
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="col-md-6">
+
+        <div class="card shadow-sm">
+
+            <div class="card-body">
+
+                <div id="live-preview">
+
+                    Loading Preview...
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<div class="mb-3">
+
+    <span id="save-status"
+          class="badge bg-secondary">
+
+        Draft Saved
+
+    </span>
+
+</div>
+
+
+<script>
+
+document.querySelectorAll(
+    '.editable-content'
+).forEach(element => {
+
+    let timeout = null;
+
+    element.addEventListener(
+        'input',
+
+        function () {
+
+            document.getElementById(
+                'save-status'
+            ).innerText = 'Saving...';
+
+            clearTimeout(timeout);
+
+            timeout = setTimeout(() => {
+
+                const blockId =
+                    this.dataset.id;
+
+                const content =
+                    this.innerHTML;
+
+                fetch(
+
+                    `/campaigns/blocks/${blockId}/update/`,
+
+                    {
+
+                        method: 'POST',
+
+                        headers: {
+
+                            'Content-Type':
+                            'application/json',
+
+                            'X-CSRFToken':
+                            '{{ csrf_token }}'
+                        },
+
+                        body: JSON.stringify({
+
+                            content: content
+                        })
+                    }
+                )
+                .then(response => response.json())
+
+                .then(data => {
+
+                    document.getElementById(
+                        'save-status'
+                    ).innerText =
+                        'Draft Saved';
+
+                    loadPreview();
+
+                });
+
+            }, 800);
+
+        }
+    );
+
+});
+
+</script>
+<span id="save-status"
+      class="badge bg-success">
+
+    Draft Saved
+
+</span>
+
+.editable-content {
+
+    min-height: 40px;
+
+    padding: 10px;
+
+    border-radius: 6px;
+}
+
+.editable-content:focus {
+
+    outline: 2px solid #0d6efd;
+
+    background: #f8f9fa;
+}
+
+<div class="d-flex
+            justify-content-between
+            align-items-center">
+
+    <strong>
+        {{ block.block_type }}
+    </strong>
+<button class="btn btn-sm btn-secondary undo-btn"
+        data-id="{{ block.id }}">
+
+    Undo
+
+</button>
+
+<button class="btn btn-sm btn-dark redo-btn"
+        data-id="{{ block.id }}">
+
+    Redo
+
+    <div>
+        <a href="/campaigns/blocks/{{ block.id }}/save-section/"
+   class="btn btn-sm btn-info">
+
+    Save Section
+
+</a>
+        <a href="/campaigns/blocks/{{ block.id }}/duplicate/"
+           class="btn btn-sm btn-warning">
+
+            Duplicate
+
+        </a>
+
+        <span class="badge bg-secondary">
+
+            Drag
+
+        </span>
+
+    </div>
+
+</div>
+<script>
+<div>
+    <script>
+
+document.querySelectorAll(
+    '.undo-btn'
+).forEach(button => {
+
+    button.addEventListener(
+        'click',
+
+        function () {
+
+            const blockId =
+                this.dataset.id;
+
+            fetch(
+
+                `/campaigns/blocks/${blockId}/undo/`
+
+            )
+            .then(response => response.json())
+
+            .then(data => {
+
+                location.reload();
+
+            });
+
+        }
+    );
+
+});
+
+document.querySelectorAll(
+    '.redo-btn'
+).forEach(button => {
+
+    button.addEventListener(
+        'click',
+
+        function () {
+
+            const blockId =
+                this.dataset.id;
+
+            fetch(
+
+                `/campaigns/blocks/${blockId}/redo/`
+
+            )
+            .then(response => response.json())
+
+            .then(data => {
+
+                location.reload();
+
+            });
+
+        }
+    );
+
+});
+
+</script>
+
+    <a href="/campaigns/templates/{{ template_id }}/preview/"
+       class="btn btn-success">
+
+        Live Preview
+
+    </a>
+
+    <a href="/campaigns/templates/{{ template_id }}/export/"
+       class="btn btn-dark">
+
+        Export HTML
+
+    </a>
+
+    <a href="/campaigns/templates/{{ template_id }}/blocks/create/"
+       class="btn btn-primary">
+
+        Add Block
+
+    </a>
+
+</div>
+function loadPreview() {
+
+    fetch(
+
+        '/campaigns/templates/{{ template_id }}/preview-api/'
+
+    )
+    .then(response => response.json())
+
+    .then(data => {
+
+        document.getElementById(
+            'live-preview'
+        ).innerHTML = data.html;
+
+    });
+
+}
+
+loadPreview();
+
+</script>
+
+</script>

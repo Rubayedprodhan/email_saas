@@ -38,11 +38,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'ckeditor',
+    'ckeditor_uploader',
     'accounts',
     'contacts',
     'campaigns',
     'core',
     'api',
+    
 ]
 
 MIDDLEWARE = [
@@ -75,7 +78,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'email_saas.wsgi.application'
 
 
-
+CKEDITOR_UPLOAD_PATH = "uploads/"
 
 REST_FRAMEWORK = {
 
@@ -174,3 +177,18 @@ SIMPLE_JWT = {
         days=7
     ),
 }
+
+
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = BASE_DIR / 'media'
+
+
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+GEMINI_API_KEY = os.getenv(
+    "GEMINI_API_KEY"
+)
